@@ -1,0 +1,32 @@
+services:
+  database:
+    container_name: db-container
+    image: mongo
+    volumes:
+      - ~/docker/mysql/db/etc/mongo/conf.d:/etc/mysql/conf.d:ro
+      - ~/docker/mysql/db/var/lib/mongo:/var/lib/mysql
+      - ~/docker/mysql/db/var/log/mongo:/var/log/mysql
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=rootdb
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - rootnet
+  application:
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mongodb://db-container:3306/rootdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - rootnet
+networks:
+  rootnet:
+    driver: bridge
