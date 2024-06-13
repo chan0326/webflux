@@ -1,9 +1,11 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
-    name: demo
+    name: rootapp
   data:
     mongodb:
-      uri: mongodb://root:root@db-container:27017/rootdb
+      uri: mongodb://root:root@101.79.9.149:27017/rootdb?retryWrites=true&w=majority&authSource=admin
   sql:
     init:
       mode: always
@@ -14,5 +16,9 @@ logging:
       hibernate:
         SQL: debug
         type: trace
+
+jwt:
+  secret: bitcamp
+  expiration: 86400000
 
 

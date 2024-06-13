@@ -6,7 +6,7 @@ import { getJwtSecretKey } from '@/lib/server/auth';
 import { UserData, UserDataPublic } from '@/types/UserData.type';
 
 export interface I_ApiUserLoginRequest {
-	login: string;
+	username: string;
 	password: string;
 }
 
@@ -19,114 +19,120 @@ export interface I_ApiUserLoginResponse {
 export const dynamic = 'force-dynamic';
 const jwtExpires = 60 * 60 * 24 * 7; // 7 days
 
-const userData: UserData = {
-	id: 1,
-	firstName: 'John',
-	lastName: 'Doe',
-	email: 'john@example.com',
-	phone: '+1 234 567 890',
-	password: '12345', // the kind of password an idiot would have on his luggage
-	role: 'user',
-};
+// const userData: UserData = {
+// 	id: 1,
+// 	firstName: 'John',
+// 	lastName: 'Doe',
+// 	email: 'john@example.com',
+// 	phone: '+1 234 567 890',
+// 	password: '12345', // the kind of password an idiot would have on his luggage
+// 	role: 'user',
+// };
 
-export async function POST(request: Request) {
-	const body = (await request.json()) as I_ApiUserLoginRequest;
+export async function POST() {
+	console.log('2- payload :  post 진입'  );
+	// const res = await fetch('https://localhost:8080/api/users/login', {
+	//   method: 'POST',
+	//   headers: {
+	// 	'Content-Type': 'application/json',
+	// 	'API-Key': process.env.DATA_API_KEY!,
+	//   },
+	//   body: JSON.stringify({ time: new Date().toISOString() }),
+	// })
+   
+	// const data = await res.json()
 
-	// trim all values
-	const { login, password } = Object.fromEntries(
-		Object.entries(body).map(([key, value]) => [key, value.trim()]),
-	) as I_ApiUserLoginRequest;
+	// console.log('3-자바를 다녀온 정보 :' + JSON.stringify(data) );
 
-	if (!login || !password) {
-		const res: I_ApiUserLoginResponse = {
-			success: false,
-			message: 'Either login or password is missing',
-		};
-
-		return NextResponse.json(res, { status: 400 });
+	const greeting = 'Hello, World!'
+	const json = {	
+		greeting
 	}
 
-	try {
-		// Validate login and password
-		try {
-			if (!userData) {
-				throw new Error('User not found');
-			}
-			if (userData.email !== login) {
-				throw new Error('Invalid login');
-			}
-			if (userData.password !== password) {
-				throw new Error('Invalid password');
-			}
-		} catch (error) {
-			let mess = 'Something went wrong';
-			if (error instanceof Error) {
-				mess = error.message;
-			}
-			console.error(`Login failed: ${mess}`);
-			return NextResponse.json(
-				{
-					success: false,
-					message: 'Invalid login or password',
-				},
-				{ status: 401 },
-			);
-		}
+	return Response.json(json)
+  
 
-		const token = await new SignJWT({
-			id: userData.id,
-			firstName: userData.firstName,
-			lastName: userData.lastName,
-			email: userData.email,
-			phone: userData.phone,
-			password: userData.password,
-			role: userData.role,
-		})
-			.setProtectedHeader({ alg: 'HS256' })
-			.setIssuedAt()
-			.setExpirationTime(`${jwtExpires}s`)
-			.sign(getJwtSecretKey());
+	// try {
+	// 	// Validate login and password
+	// 	try {
+	// 		if (!userData) {
+	// 			throw new Error('User not found');
+	// 		}
+	// 		if (userData.email !== login) {
+	// 			throw new Error('Invalid login');
+	// 		}
+	// 		if (userData.password !== password) {
+	// 			throw new Error('Invalid password');
+	// 		}
+	// 	} catch (error) {
+	// 		let mess = 'Something went wrong';
+	// 		if (error instanceof Error) {
+	// 			mess = error.message;
+	// 		}
+	// 		console.error(`Login failed: ${mess}`);
+	// 		return NextResponse.json(
+	// 			{
+	// 				success: false,
+	// 				message: 'Invalid login or password',
+	// 			},
+	// 			{ status: 401 },
+	// 		);
+	// 	}
 
-		const res: I_ApiUserLoginResponse = {
-			success: true,
-			userData,
-		};
+	// 	const token = await new SignJWT({
+	// 		id: userData.id,
+	// 		firstName: userData.firstName,
+	// 		lastName: userData.lastName,
+	// 		email: userData.email,
+	// 		phone: userData.phone,
+	// 		password: userData.password,
+	// 		role: userData.role,
+	// 	})
+	// 		.setProtectedHeader({ alg: 'HS256' })
+	// 		.setIssuedAt()
+	// 		.setExpirationTime(`${jwtExpires}s`)
+	// 		.sign(getJwtSecretKey());
 
-		const response = NextResponse.json(res);
+	// 	const res: I_ApiUserLoginResponse = {
+	// 		success: true,
+	// 		userData,
+	// 	};
 
-		// Set encoded token as cookie
-		response.cookies.set({
-			name: 'token',
-			value: token,
-			path: '/',
-		});
+	// 	const response = NextResponse.json(res);
 
-		// Create public user data
-		const userDataPublic: UserDataPublic = {
-			id: userData.id,
-			firstName: userData.firstName,
-			lastName: userData.lastName,
-			email: userData.email,
-			phone: userData.phone,
-			role: userData.role,
-		};
+	// 	// Set encoded token as cookie
+	// 	response.cookies.set({
+	// 		name: 'token',
+	// 		value: token,
+	// 		path: '/',
+	// 	});
 
-		// Set public user data as cookie
-		response.cookies.set({
-			name: 'userData',
-			value: JSON.stringify(userDataPublic),
-			path: '/',
-		});
+	// 	// Create public user data
+	// 	const userDataPublic: UserDataPublic = {
+	// 		id: userData.id,
+	// 		firstName: userData.firstName,
+	// 		lastName: userData.lastName,
+	// 		email: userData.email,
+	// 		phone: userData.phone,
+	// 		role: userData.role,
+	// 	};
 
-		return response;
-	} catch (error: any) {
-		console.error(error);
+	// 	// Set public user data as cookie
+	// 	response.cookies.set({
+	// 		name: 'userData',
+	// 		value: JSON.stringify(userDataPublic),
+	// 		path: '/',
+	// 	});
 
-		const res: I_ApiUserLoginResponse = {
-			success: false,
-			message: error.message || 'Something went wrong',
-		};
+	// 	return response;
+	// } catch (error: any) {
+	// 	console.error(error);
 
-		return NextResponse.json(res, { status: 500 });
-	}
+	// 	const res: I_ApiUserLoginResponse = {
+	// 		success: false,
+	// 		message: error.message || 'Something went wrong',
+	// 	};
+
+	// 	return NextResponse.json(res, { status: 500 });
+	// }
 }

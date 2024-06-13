@@ -2,8 +2,6 @@ package com.example.demo.security.component;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import com.example.demo.security.domain.JwtToken;
-import com.example.demo.security.exception.JwtAuthenticationException;
 import com.example.demo.security.filter.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
@@ -21,11 +19,12 @@ public class AuthManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        return Mono.just(authentication)
-                .cast(JwtToken.class)
-                .filter(jwtToken -> tokenProvider.isTokenValid(jwtToken.getToken()))
-                .map(jwtToken -> jwtToken.withAuthenticated(true))
-                .switchIfEmpty(Mono.error(new JwtAuthenticationException("Invalid token.")));
+        // return Mono.just(authentication)
+        //         .cast(JwtToken.class)
+        //         .filter(jwtToken -> tokenProvider.isTokenValid(jwtToken.getToken()))
+        //         .map(jwtToken -> jwtToken.withAuthenticated(true))
+        //         .switchIfEmpty(Mono.error(new JwtAuthenticationException("Invalid token.")));
+        return Mono.empty();
     }
 
 }

@@ -1,32 +1,39 @@
 package com.example.demo.user.model;
 
-import lombok.Data;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.*;
 
-import jakarta.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
-//@Entity
-@Data
-//@Table(name = "users")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Document(collection = "users")
 public class UserModel {
-//    @Id @Column(name = "user_id")
-//    @GeneratedValue
-//    private long userId;
-//    @Column(name = "username", unique = true, nullable = false)
-//    private String username;
-//    @Column(name = "password", nullable = false)
-//    @Size(min=8, message = "8자리 이상 입력하시오")
-//    private String password;
-//    @Column(name = "name", nullable = false)
-//    private String name;
-//    @Column(name = "email", nullable = false, unique = true)
-//    private String email;
-//    @Column(name = "reg_date")
-//    private String regDate;
-//    @OneToMany(mappedBy = "user")
-//    private List<OrderModel> orders = new ArrayList<>();
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    public List<Role> roles;
+
+    @Id String userId ;
+    String firstName ;
+    String lastName ;
+    String email;
+    String password ;
+
+
+    List <RoleModel> roles ;
+
+
+
+    @Override
+    public String toString() {
+        return "UserModel [userId=" + userId +
+                ", firstName=" + firstName +
+                ", lastName=" + lastName +
+                ", email=" + email +
+                ", password=" + password +
+                "]";
+    }
+
+
 
 }
-

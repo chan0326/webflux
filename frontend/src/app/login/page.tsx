@@ -33,19 +33,45 @@ export default function LoginPage() {
 				throw new Error('Please enter your credentials.');
 
 			const payload: I_ApiUserLoginRequest = {
-				login: loginRef.current?.value,
+				username: loginRef.current?.value,
 				password: passwordRef.current?.value,
 			};
+			console.log('1- payload : ' + JSON.stringify(payload) );
 
-			const response = await fetch('/api/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(payload),
-			});
+			// const response = await fetch('api/hello', {
+			// 	method: 'GET',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+				
+			// });
+			// --------------------------------------------------
 
-			const data: I_ApiUserLoginResponse = await response.json();
+			// const response = await fetch('api/login', {
+			// 	method: 'POST',
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// 	body: JSON.stringify(payload),
+			// });
+
+		   // --------------------------------------------------
+         const res = await fetch('https://localhost:8080/api/users/login', {
+	     method: 'POST',
+	     headers: {
+	    	'Content-Type': 'application/json',
+	    	'API-Key': process.env.DATA_API_KEY!,
+	     },
+	     body: JSON.stringify({ time: new Date().toISOString() }),
+	     })
+   
+	     const data2 = await res.json()
+
+	     console.log('3-자바를 다녀온 정보 :' + JSON.stringify(data2) );
+
+			const data: I_ApiUserLoginResponse = await res.json();
+
+			console.log('4-자바를 다녀온 정보 :' + JSON.stringify(data) );
 
 			if (data.success) {
 				setLoginIsComplete(true);
